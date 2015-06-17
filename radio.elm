@@ -3,6 +3,7 @@ import Color exposing (..)
 import Graphics.Element exposing (..)
 import Graphics.Input exposing (..)
 import Window
+import List
 
 -- model
 type alias State =
@@ -38,16 +39,13 @@ square x y myColor name =
     |> clickable (Signal.message actions.address (Click name))
 
 view s (x,y) =
-  flow down [
-    flow right [
-      square x y lightBlue "a"
-    , square x y lightRed "b"
-    ],
-    flow right [
-      square x y lightPurple "c"
-    ,  square x y green "d"
-    ]
-    , show s]
+    List.foldl (\radio result ->
+                  List.append result
+                  [flow right [square x y lightBlue radio.name]]
+               )
+               []
+               s.radios
+            |> List.append [show s.name] |> flow down
 
 -- actions
 type Actions = Click String | Stop
