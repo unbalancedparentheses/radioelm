@@ -1,3 +1,5 @@
+module Radio where
+
 import Signal exposing (..)
 import Color exposing (..)
 import Graphics.Element exposing (..)
@@ -65,9 +67,13 @@ update action model =
           playing <- True
         }
 
+
+model = foldp (\actions model -> update actions model) initialState actions.signal
+
 -- inputs
 main =
-  let model =
-    foldp (\actions model -> update actions model) initialState actions.signal
-  in
-    view <~ model ~ Window.dimensions
+  view <~ model ~ Window.dimensions
+
+port name : Signal String
+port name =
+     Signal.map .name model
