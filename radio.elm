@@ -9,7 +9,7 @@ import List
 
 -- model
 type alias State =
-  { name: String
+  { r: Radio
   , playing: Bool
   , radios: List Radio
   }
@@ -25,45 +25,53 @@ radio name url =
   }
 
 initialState =
-  { name = ""
+  { r = {name = "", url = ""}
   , playing = False
   , radios =
     [ radio "mitre" "http://buecrplb01.cienradios.com.ar/mitremdz.mp3"
     , radio "continental" "http://1351.live.streamtheworld.com:80/CONTINENTAL_SC"
     , radio "metro" "http://108.166.161.217:8615/metro.mp3"
-    , radio "el mundo" "http://radiostream.elmundoradio.com:8332/"
+    , radio "radio argentina" "http://wmserver3.aginet.com.ar:13574/;stream/1/"
+    , radio "los 40" "http://5133.live.streamtheworld.com:80/LOS40_ARGENTINA_SC"
+    , radio "la 100" "http://buecrplb01.cienradios.com.ar/la100.aac"
+    , radio "espn" "http://edge.espn.cdn.abacast.net/espn-deportesmp3-48"
+    , radio "imagina" "http://7309.live.streamtheworld.com:80/IMAGINA_ARGENTINA_SC"
+    , radio "rock & pop" "http://69.4.236.136:9988/;"
+    -- , radio "radio 10" "rtmp://radio10.stweb.tv:1935/radio10/"
     ]
   }
 
 -- view
-square x y myColor name =
-  color myColor (container (x // 2) (y // 2) midBottom (show name))
-    |> clickable (Signal.message actions.address (Click name))
+square x y myColor radio =
+  color myColor (container (x // 2) (y // 2) midBottom (show radio.name))
+    |> clickable (Signal.message actions.address (Click radio))
 
 view s (x,y) =
     List.foldl (\radio result ->
                   List.append result
-                  [flow right [square x y lightBlue radio.name]]
+                  [flow right [square x y lightBlue radio]]
                )
                []
                s.radios
             |> List.append [show s.name] |> flow down
 
 -- actions
-type Actions = Click String | Stop
+type Actions = Click Radio | Stop
 
 actions : Signal.Mailbox Actions
 actions = Signal.mailbox Stop
 
 update action model =
   case action of
-    Click x ->
-      if model.name == x && model.playing then
-        { model | name <- x,
+    Click radio ->
+      if model.r.name == radio.name && model.playing then
+        { model |
+          r <- radio,
           playing <- False
         }
       else
-        { model | name <- x,
+        { model |
+          r <- radio,
           playing <- True
         }
 
@@ -74,6 +82,6 @@ model = foldp (\actions model -> update actions model) initialState actions.sign
 main =
   view <~ model ~ Window.dimensions
 
-port name : Signal String
+port name : Signal Radio
 port name =
-     Signal.map .name model
+     Signal.map .r model
