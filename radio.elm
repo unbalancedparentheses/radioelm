@@ -6,10 +6,11 @@ import Graphics.Element exposing (..)
 import Graphics.Input exposing (..)
 import Window
 import List
+import Text exposing (..)
 
 -- model
 type alias State =
-  { r: Radio
+  { radio: Radio
   , playing: Bool
   , radios: List Radio
   }
@@ -25,7 +26,7 @@ radio name url =
   }
 
 initialState =
-  { r = {name = "", url = ""}
+  { radio = {name = "", url = ""}
   , playing = False
   , radios =
     [ radio "mitre" "http://buecrplb01.cienradios.com.ar/mitremdz.mp3"
@@ -42,18 +43,24 @@ initialState =
   }
 
 -- view
+txt string =
+    Text.fromString string
+        |> Text.color white
+        |> Text.monospace
+        |> Graphics.Element.leftAligned
+
 square x y myColor radio =
-  color myColor (container (x // 2) (y // 2) midBottom (show radio.name))
+    Graphics.Element.color myColor (container (x // 2) (y // 2) midBottom (txt radio.name))
     |> clickable (Signal.message actions.address (Click radio))
 
-view s (x,y) =
+view state (x,y) =
     List.foldl (\radio result ->
                   List.append result
                   [flow right [square x y lightBlue radio]]
                )
                []
-               s.radios
-            |> List.append [show s.name] |> flow down
+               state.radios
+            |> List.append [show state.radio.name] |> flow down
 
 -- actions
 type Actions = Click Radio | Stop
@@ -64,17 +71,15 @@ actions = Signal.mailbox Stop
 update action model =
   case action of
     Click radio ->
-      if model.r.name == radio.name && model.playing then
-        { model |
-          r <- radio,
-          playing <- False
-        }
-      else
-        { model |
-          r <- radio,
-          playing <- True
-        }
-
+      let playing =
+          if model.radio.name == radio.name && model.playing then
+              False
+          else
+              True
+      in { model |
+           radio <- radio,
+           playing <- playing
+         }
 
 model = foldp (\actions model -> update actions model) initialState actions.signal
 
@@ -82,6 +87,6 @@ model = foldp (\actions model -> update actions model) initialState actions.sign
 main =
   view <~ model ~ Window.dimensions
 
-port name : Signal Radio
+port name : Signal State
 port name =
-     Signal.map .r model
+     (\x -> x) <~ model

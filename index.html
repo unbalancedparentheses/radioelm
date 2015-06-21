@@ -12,28 +12,6 @@
   <body>
   </body>
 
-  <script type="text/javascript">
-
-    var audio5js;
-
-    var radio = Elm.fullscreen(Elm.Radio);
-
-
-    radio.ports.name.subscribe(function (url){
-    if (audio5js && typeof audio5js.destroy == 'function') {
-    audio5js.destroy();
-    }
-
-    audio5js = new Audio5js({
-    swf_path: '/statics/swf/audio5js.swf',
-    ready: function () {
-    this.load(url);
-    this.play();
-    }
-    });
-
-
-    });
-  </script>
+  <script type="text/javascript" src="./port.js"></script>
 
 </html>
