@@ -21,12 +21,6 @@ type alias Radio =
   , color: Color
   }
 
-initialState =
-  { name = ""
-  , url = ""
-  , playing = False
-  }
-
 radio name url (r,g,b) =
   { name = name
   , url = url
@@ -40,11 +34,32 @@ radios =
     , radio "radio argentina" "http://wmserver3.aginet.com.ar:13574/;stream/1/" (97, 174, 36)
     , radio "los 40" "http://5133.live.streamtheworld.com:80/LOS40_ARGENTINA_SC" (208, 209, 2)
     , radio "la 100" "http://buecrplb01.cienradios.com.ar/la100.aac" (50, 116, 44)
-    , radio "espn" "http://edge.espn.cdn.abacast.net/espn-deportesmp3-48" (1, 164, 164)
+    , radio "espn" "http://edge.espn.cdn.abacast.net/espn-deportesmp3-48" (215, 0, 96)
     , radio "imagina" "http://7309.live.streamtheworld.com:80/IMAGINA_ARGENTINA_SC" (229, 64, 40)
-    , radio "rock & pop" "http://69.4.236.136:9988/;" (215, 0, 96)
-    -- , radio "radio 10" "rtmp://radio10.stweb.tv:1935/radio10/"
+    , radio "rock & pop" "http://69.4.236.136:9988/;" (1, 164, 164)
+    , radio "del plata" "http://bel-se-1.se.amdelplata.activecds.telecomcdn.com.ar/amdelplata.mp3" (97, 97, 97)
+    , radio "cadena 3" "http://coe-se-2.se.cadena3.activecds.telecomcdn.com.ar/am700.mp3" (60, 181, 181)
+    , radio "radio argentina" "http://wmserver3.aginet.com.ar:13574/;stream/1/" (180, 178, 174)
+    , radio "nova" "http://buecrplb01.cienradios.com.ar/fm979.mp3" (142, 68, 35)
+    , radio "sonic" "http://live.chicago.cdn.sonic.fm:8000/live128" (215, 0, 96)
+    , radio "el mundo" "http://radiostream.elmundoradio.com:8332/;" (50, 116, 44)
     ]
+
+initialState =
+    let name = case List.head radios of
+                 Just r ->
+                    r.name
+                 Nothing ->
+                     ""
+        url = case List.head radios of
+                Just r ->
+                    r.url
+                Nothing ->
+                    ""
+    in { name = name
+       , url = url
+       , playing = False
+       }
 
 -- utils
 chunk n list =
@@ -91,14 +106,14 @@ controls x y playing =
 txt string =
     Text.fromString string
         |> Text.color white
-        |> Text.monospace
         |> Text.height 25
+        |> Text.typeface ["sans-serif", "helvetica"]
         |> Graphics.Element.centered
 
 cards x =
     if | x < 300 -> 1
-       | x < 500 -> 2
-       | x < 800 -> 3
+       | x < 600 -> 2
+       | x < 850 -> 3
        | otherwise -> 4
 
 -- actions
