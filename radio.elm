@@ -60,6 +60,29 @@ chunk2 acc n list =
         chunk2 (aux :: acc) n newList
 
 -- view
+view state (x,y) =
+    List.map (\r -> square x y r) radios
+        |> List.append [(controls x y state.playing)]
+        |> chunk 3
+        |> List.map (\r -> flow right r)
+        |> flow down
+
+square x y radio =
+    container (x // 3) (y // 3) middle (flow down [txt radio.name])
+        |> Graphics.Element.color radio.color
+        |> clickable (Signal.message actions.address (Click radio))
+
+controls x y playing =
+    let text =
+        if playing then
+            "Pause"
+        else
+            "Play"
+    in
+      container (x // 3) (y // 3) middle (flow down [txt text])
+          |> Graphics.Element.color black
+          |> clickable (Signal.message actions.address Control)
+
 txt string =
     Text.fromString string
         |> Text.color white
@@ -67,36 +90,30 @@ txt string =
         |> Text.height 25
         |> Graphics.Element.centered
 
-square x y radio =
-    container (x // 3) (y // 3) middle (flow down [txt radio.name])
-        |> Graphics.Element.color radio.color
-        |> clickable (Signal.message actions.address (Click radio))
-
-view state (x,y) =
-    List.map (\r -> square x y r) radios
-        |> chunk 3
-        |> List.map (\r -> flow right r)
-        |> flow down
-
 -- actions
-type Actions = Click Radio | Stop
+type Actions = Click Radio | Control
 
 actions : Signal.Mailbox Actions
-actions = Signal.mailbox Stop
+actions = Signal.mailbox Control
 
 update action model =
   case action of
+    Control ->
+        let playing =
+            if model.playing then
+                False
+            else
+                True
+        in
+          { model |
+            playing <- playing
+          }
     Click radio ->
-      let playing =
-          if model.name == radio.name && model.playing then
-              False
-          else
-              True
-      in { model |
-           url <- radio.url
-         , name <- radio.name
-         , playing <- playing
-         }
+        { model |
+          url <- radio.url
+        , name <- radio.name
+        , playing <- True
+        }
 
 model = foldp (\actions model -> update actions model) initialState actions.signal
 
