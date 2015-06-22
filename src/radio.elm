@@ -45,21 +45,25 @@ radios =
     , radio "el mundo" "http://radiostream.elmundoradio.com:8332/;" (50, 116, 44)
     ]
 
+initialName =
+    case List.head radios of
+      Just r ->
+          r.name
+      Nothing ->
+          ""
+
+initialUrl =
+    case List.head radios of
+      Just r ->
+          r.url
+      Nothing ->
+          ""
+
 initialState =
-    let name = case List.head radios of
-                 Just r ->
-                    r.name
-                 Nothing ->
-                     ""
-        url = case List.head radios of
-                Just r ->
-                    r.url
-                Nothing ->
-                    ""
-    in { name = name
-       , url = url
-       , playing = False
-       }
+    { name = initialName
+    , url = initialUrl
+    , playing = False
+    }
 
 -- utils
 chunk n list =
