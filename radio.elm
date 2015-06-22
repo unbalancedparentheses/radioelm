@@ -61,25 +61,30 @@ chunk2 acc n list =
 
 -- view
 view state (x,y) =
-    List.map (\r -> square x y r) radios
-        |> List.append [(controls x y state.playing)]
-        |> chunk 3
-        |> List.map (\r -> flow right r)
-        |> flow down
+    let numberofcards = cards x
+    in
+      List.map (\r -> square x y r) radios
+          |> List.append [(controls x y state.playing)]
+          |> chunk numberofcards
+          |> List.map (\r -> flow right r)
+          |> flow down
 
 square x y radio =
-    container (x // 3) (y // 3) middle (flow down [txt radio.name])
-        |> Graphics.Element.color radio.color
-        |> clickable (Signal.message actions.address (Click radio))
+    let numberofcards = cards x
+    in
+      container (x // numberofcards) (y // numberofcards) middle (flow down [txt radio.name])
+          |> Graphics.Element.color radio.color
+          |> clickable (Signal.message actions.address (Click radio))
 
 controls x y playing =
     let text =
         if playing then
-            "Pause"
+            "pause"
         else
-            "Play"
+            "play"
+        numberofcards = cards x
     in
-      container (x // 3) (y // 3) middle (flow down [txt text])
+      container (x // numberofcards) (y // numberofcards) middle (flow down [txt text])
           |> Graphics.Element.color black
           |> clickable (Signal.message actions.address Control)
 
@@ -89,6 +94,12 @@ txt string =
         |> Text.monospace
         |> Text.height 25
         |> Graphics.Element.centered
+
+cards x =
+    if | x < 300 -> 1
+       | x < 500 -> 2
+       | x < 800 -> 3
+       | otherwise -> 4
 
 -- actions
 type Actions = Click Radio | Control
