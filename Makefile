@@ -1,6 +1,6 @@
-.PHONY: all clean radio html css js dev publish
+.PHONY: all clean radio html css js static dev publish
 
-all: radio html css js
+all: radio html css js static
 
 clean:
 	rm -rf build/ &&\
@@ -17,6 +17,9 @@ css:
 
 js:
 	cp src/port.js build/
+
+static:
+	cp static/* build/
 
 dev: all
 	live-server build/
