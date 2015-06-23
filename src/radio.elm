@@ -1,12 +1,12 @@
 module Radio where
 
 import Signal exposing (..)
-import Color exposing (..)
 import Graphics.Element exposing (..)
 import Graphics.Input exposing (..)
+import Color
 import Window
 import List
-import Text exposing (..)
+import Text
 
 -- model
 type alias State =
@@ -18,7 +18,7 @@ type alias State =
 type alias Radio =
   { name: String
   , url: String
-  , color: Color
+  , color: Color.Color
   }
 
 radio name url (r,g,b) =
@@ -83,33 +83,37 @@ view state (x,y) =
     let numberofcards = cards x
     in
       List.map (\r -> square x y r) radios
-          |> List.append [(controls x y state.playing)]
+          |> List.append [(control x y state.playing)]
           |> chunk numberofcards
           |> List.map (\r -> flow right r)
           |> flow down
 
 square x y radio =
     let numberofcards = cards x
+        xSize = x // numberofcards
+        ySize = y // numberofcards
     in
-      container (x // numberofcards) (y // numberofcards) middle (flow down [txt radio.name])
+      container xSize ySize middle (flow down [txt radio.name])
           |> Graphics.Element.color radio.color
           |> clickable (Signal.message actions.address (Click radio))
 
-controls x y playing =
+control x y playing =
     let text =
         if playing then
             "pause"
         else
             "play"
         numberofcards = cards x
+        xSize = x // numberofcards
+        ySize = y // numberofcards
     in
-      container (x // numberofcards) (y // numberofcards) middle (flow down [txt text])
-          |> Graphics.Element.color black
+      container xSize ySize middle (flow down [txt text])
+          |> Graphics.Element.color Color.black
           |> clickable (Signal.message actions.address Control)
 
 txt string =
     Text.fromString string
-        |> Text.color white
+        |> Text.color Color.white
         |> Text.height 25
         |> Text.typeface ["sans-serif", "helvetica"]
         |> Graphics.Element.centered
