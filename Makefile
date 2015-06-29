@@ -1,12 +1,12 @@
-.PHONY: all clean radio html css js dev publish
+.PHONY: all elm radio html css js dev publish
 
-all: radio html css js
+all: elm html css js
 
 clean:
 	rm -rf build/ &&\
 	mkdir -p build
 
-radio:
+elm:
 	elm-make src/radio.elm --output=build/elm.js
 
 html:
@@ -19,7 +19,7 @@ js:
 	cp src/port.js build/
 
 dev: all
-	live-server build/
+	live-server build/& watch make ./src
 
 publish: clean all
 	cd build &&\
