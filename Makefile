@@ -1,7 +1,6 @@
 ELM_MAIN = radio
 ELM_OUTPUT = elm.js
 STATIC = index.html
-BROWSER_TARGET = demo.html
 
 SOURCE_DIR = src
 BUILD_DIR = build
