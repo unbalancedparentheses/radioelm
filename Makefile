@@ -1,26 +1,42 @@
-.PHONY: all elm radio html css js dev publish
+ELM_MAIN = radio
+ELM_OUTPUT = elm.js
+STATIC = index.html
+BROWSER_TARGET = demo.html
 
-all: elm html css js
+SOURCE_DIR = src
+BUILD_DIR = build
+
+ELM_SOURCE = $(SOURCE_DIR)/$(ELM_MAIN).elm
+ELM_BUILD = $(BUILD_DIR)/$(ELM_OUTPUT)
+
+###
+
+.PHONY: all clean radio html css js static dev publish
+
+all: elm html css js static
 
 clean:
-	rm -rf build/ &&\
-	mkdir -p build
+	rm -rf $(BUILD_DIR) &&\
+	mkdir -p $(BUILD_DIR)
 
 elm:
-	elm-make src/radio.elm --output=build/elm.js
+	elm-make $(SOURCE_DIR)/$(ELM_MAIN).elm --output=$(ELM_BUILD)
 
 html:
-	cp src/index.html build/
+	cp $(SOURCE_DIR)/index.html $(BUILD_DIR)
 
 css:
-	cp src/styles.css build/
+	cp $(SOURCE_DIR)/styles.css $(BUILD_DIR)
 
 js:
-	cp src/port.js build/
+	cp $(SOURCE_DIR)/port.js $(BUILD_DIR)
+
+static:
+	cp static/* $(BUILD_DIR)
 
 dev: all
-	live-server build/& watch make ./src
-
+	live-server $(BUILD_DIR) &  watch make ./src
+        
 publish: clean all
 	cd build &&\
 	git init &&\
