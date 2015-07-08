@@ -34,8 +34,8 @@ static:
 	cp static/* $(BUILD_DIR)
 
 dev: all
-	live-server $(BUILD_DIR) &  watch make ./src
-        
+	live-server $(BUILD_DIR)& stalk make ./src
+
 publish: clean all
 	cd build &&\
 	git init &&\
