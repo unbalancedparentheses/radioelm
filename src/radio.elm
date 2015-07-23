@@ -28,7 +28,7 @@ radio name url (r,g,b) =
   }
 
 radios =
-    [ radio "mitre" "http://buecrplb01.cienradios.com.ar/mitremdz.mp3" (17, 63, 140)
+    [ radio "mitre" "http://buecrplb01.cienradios.com.ar/Mitre790.aac" (17, 63, 140)
     , radio "continental" "http://1351.live.streamtheworld.com:80/CONTINENTAL_SC" (241, 141, 5)
     , radio "metro" "http://108.166.161.217:8615/metro.mp3" (0, 161, 203)
     , radio "radio argentina" "http://wmserver3.aginet.com.ar:13574/;stream/1/" (97, 174, 36)
