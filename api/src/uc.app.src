@@ -1,0 +1,19 @@
+{application, uc,
+ [
+  {description,
+   "Url Checker"},
+  {vsn, "0.1.0"},
+  {registered, []},
+  {applications,
+    [kernel,
+     stdlib,
+     lager,
+     epgsql,
+     cowboy,
+     ibrowse,
+     jiffy
+    ]},
+  {modules, []},
+  {mod, {uc, []}}
+ ]
+}.

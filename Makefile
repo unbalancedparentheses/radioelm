@@ -1,47 +1,40 @@
-ELM_MAIN = radio
-ELM_OUTPUT = elm.js
-STATIC = index.html
+OS = $(shell uname -s)
+ARCH =  $(shell uname -m)
 
-SOURCE_DIR = src
-BUILD_DIR = build
+.PHONY: default
+default: build
 
-ELM_SOURCE = $(SOURCE_DIR)/$(ELM_MAIN).elm
-ELM_BUILD = $(BUILD_DIR)/$(ELM_OUTPUT)
+.PHONY: deps
+deps:
+	curl -L https://github.com/docker/compose/releases/download/1.3.2/docker-compose-${OS}-${ARCH} > /usr/local/bin/docker-compose
+	chmod +x /usr/local/bin/docker-compose
+	pip install -r requirements.txt
 
-###
-
-.PHONY: all clean radio html css js static dev publish
-
-all: elm html css js static
-
+.PHONY: clean
 clean:
-	rm -rf $(BUILD_DIR) &&\
-	mkdir -p $(BUILD_DIR)
+	docker-compose kill
+	docker-compose rm -f
 
-elm:
-	elm-make $(SOURCE_DIR)/$(ELM_MAIN).elm --output=$(ELM_BUILD)
+.PHONY: build
+build: clean
+	docker-compose build
 
-html:
-	cp $(SOURCE_DIR)/index.html $(BUILD_DIR)
+.PHONY: makemigrations
+makemigrations: clean
+	docker-compose run --rm admin sh -c "sleep 3 && python3 manage.py makemigrations"
 
-css:
-	cp $(SOURCE_DIR)/styles.css $(BUILD_DIR)
+.PHONY: migrate
+migrate: clean
+	docker-compose run --rm admin sh -c "sleep 3 && python3 manage.py migrate"
 
-js:
-	cp $(SOURCE_DIR)/port.js $(BUILD_DIR)
+.PHONY: createsuperuser
+createsuperuser:
+	docker-compose run --rm admin python3 manage.py createsuperuser
 
-static:
-	cp static/* $(BUILD_DIR)
+.PHONY: dev
+dev: clean
+	docker-compose up
 
-dev: all
-	live-server $(BUILD_DIR)& stalk make ./src
-
-publish: clean all
-	cd build &&\
-	git init &&\
-	git remote add origin git@github.com:unbalancedparentheses/radioelm.git &&\
-	git add . &&\
-	git commit -m "update gh-pages to match master" &&\
-	git push origin -f master:gh-pages &&\
-	echo "Successfully pushed to production." &&\
-	echo "Check https://unbalancedparentheses.github.io/radioelm/"
+.PHONY: run
+run:
+	docker-compose up -d

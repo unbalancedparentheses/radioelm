@@ -1,0 +1,4 @@
+Django
+django-flat-theme
+psycopg2
+gunicorn
